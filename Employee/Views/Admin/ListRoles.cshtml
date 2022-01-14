@@ -27,8 +27,11 @@
                 </h5>
             </div>
             <div class="card-footer">
-                <a class="btn btn-primary" asp-action="EditRole" asp-controller="Admin" asp-route-id="@role.Id">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
+                <form method="post" asp-action="DeleteRole" asp-route-id="@role.Id">
+                    <a class="btn btn-primary" asp-action="EditRole" 
+                        asp-controller="Admin" asp-route-id="@role.Id">Edit</a>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
             </div>
         </div>
     }

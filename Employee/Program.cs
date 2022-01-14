@@ -32,6 +32,12 @@ builder.Services.AddMvc(options => {
     options.Filters.Add(new AuthorizeFilter(policy));
 }).AddXmlSerializerFormatters();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("DeleteRolePolicy",
+        policy => policy.RequireClaim("Delete Role"));
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

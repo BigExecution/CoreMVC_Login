@@ -38,7 +38,12 @@ namespace Employee.Controllers
                 var result = await userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
-                { 
+                {
+                    if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        return RedirectToAction("ListUsers", "Admin");
+                    }
+
                     await signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
@@ -90,6 +95,12 @@ namespace Employee.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }
