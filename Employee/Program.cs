@@ -1,4 +1,5 @@
 using Employee.Models;
+using Employee.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -32,11 +33,30 @@ builder.Services.AddMvc(options => {
     options.Filters.Add(new AuthorizeFilter(policy));
 }).AddXmlSerializerFormatters();
 
+//builder.Services.ConfigureApplicationCookie(options =>
+//{
+//    options.AccessDeniedPath = new PathString("/Admin/AccessDenied");
+//});
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("DeleteRolePolicy",
         policy => policy.RequireClaim("Delete Role"));
+
+    //options.AddPolicy("EditRolePolicy",
+    //    policy => policy.RequireClaim("Edit Role"));
+
+    options.AddPolicy("EditRolePolicy",
+        policy => policy.AddRequirements(new ManageAdminRolesAndClaimsRequirement()));
 });
+
+
+builder.Services.AddSingleton<IAuthorizationHandler, CanEditOnlyOtherAdminRolesAndClaimsHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
+
+builder.Services.AddTransient<ITransientService, OperationService>();
+builder.Services.AddScoped<IScopedService, OperationService>();
+builder.Services.AddSingleton<ISingletonService, OperationService>();
 
 var app = builder.Build();
 
